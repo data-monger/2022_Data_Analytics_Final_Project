@@ -9,5 +9,12 @@ Access to clean drinking water, free of chemicals and biological material, is a 
 ### Question
 Do communities with traditionally underserved demographics have access to clean drinking water?
 
+### Team Communication 
+We are utilizing the following channels for communication and co-working:
+- Slack: for daily stand-ups and discussion or troubleshooting
+- Microsoft OneNote: for project planning and note-taking
+- Zoom: for co-working sessions
+
 ## Data
 Data is being sourced from usgs.gov, epa.gov, and the US Census data (2010).
+
