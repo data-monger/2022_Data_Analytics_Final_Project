@@ -1,7 +1,8 @@
-# 2022_Data_Analytics_Final_Project
+# 2022 Data Analytics Final Project
+## Identifying at-risk and underserved communities with poor quality drinking water in the United States
 
-## Overview
-The purpose of this project is to analyze drinking water quality to determine if the quality of community's drinking water is correlated with certain demographic markers, such as income level.
+## Project Overview
+The purpose of this project is to analyze drinking water quality to determine if the quality of community's drinking water is correlated with certain demographic markers, such as income level. Specifically, we are aiming to use socioeconomic data and drinking water quality data to identify at-risk communities that are historically underserved. By identifying which communities are at most risk (i.e., poverty level, racial inequity, average house age >60 years, etc.) and filtering those communities based on our analysis of water quality data, we can target communities most in need of humanitarian support to remediate their water source.
 
 ### Why
 Access to clean drinking water, free of chemicals and biological material, is a basic human right. In the United States, we take access to clean drinking water for granted. The lead in the drinking water in Flint, MI was a wake-up call that perhaps other communities are also dealing with sub-par water. 
@@ -16,14 +17,15 @@ We are utilizing the following channels for communication and co-working:
 - Zoom: for co-working sessions
 
 ## Data
-Data is being sourced from usgs.gov, epa.gov, and the US Census data (2010).
+Data is being sourced from web scraping of [Environmental Working Group's Tap Water Database](https://www.ewg.org/tapwater/), usgs.gov, epa.gov, and the US Census data (2010).
 
-# Machine Learning Mock-up
+## Machine Learning Mock-up
 
-## Overview
+### Machine Learning Overview
 The machine learning scope of this project will be three-fold: one supervised machine learning model trained on water quality data that will predict the quality of any input data from a water utility report, another unsupervised categorization model which will inform categories of interest to develop a supervised model. The latter models will train on the datasets which have been scraped from the [Environmental Working Group's Tap Water Database](https://www.ewg.org/tapwater/) as well as socioeconomic data retrieved from the US Census API. The purpose of having this three-fold structure is to be able to identify at-risk communities due to socioeconomic inequity with high level pollutants in their drinking water. The first model will then be able to take as input a water quality report and predict a quality index for any communities identified from the other model.
 
-## Water Quality Prediction Model
+### Water Quality Binary Classifier Prediction Model
+
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -606,9 +608,9 @@ y_train
 
 
 
-# Model Training
+## Model Training
 
-## Decision tree binary classifier
+### Decision tree binary classifier
 
 
 ```python
@@ -767,4 +769,575 @@ confusion_matrix(y_test,prediction_grid)
 
 ### Future testing will include other models and optimizations
 
-## Other Models for the EWG and socioeconomic data will be constructed once that dataset is complete. The EWG scraping has been successful and the remaining socioeconomic data needs to be joined from the US Census API retrieval.
+#### Other Models for the EWG and socioeconomic data will be constructed once that dataset is complete. The EWG scraping has been successful and the remaining socioeconomic data needs to be joined from the US Census API retrieval.
+
+## Other Datasets scraped from [Environmental Working Group's Tap Water Database](https://www.ewg.org/tapwater/)
+The following illustrates an example web scrape of all of the utilities in one zip code. This will be executed for a list of all the zip codes in a state and a dataset for each state will be added to our database.
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup as soup
+import pandas as pd
+import requests
+
+```
+
+
+```python
+driver = webdriver.Chrome()
+driver.get("https://www.ewg.org/tapwater/")
+```
+
+
+```python
+element = driver.find_element(By.XPATH,'/html/body/main/section[1]/form/input[1]')
+
+```
+
+
+```python
+element.send_keys('97045')
+```
+
+
+```python
+button = driver.find_element(By.XPATH,'/html/body/main/section[1]/form/input[3]').click()
+
+```
+
+
+```python
+zip_url = driver.current_url
+zip_url
+```
+
+
+
+
+    'https://www.ewg.org/tapwater/search-results.php?zip5=97045&searchtype=zip'
+
+
+
+
+```python
+url = requests.get(zip_url)
+table = pd.read_html(url.text)
+```
+
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Utility name</th>
+      <th>City</th>
+      <th>People served</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>Oregon City, OR</td>
+      <td>Population served:87,700</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>South Fork Water Board</td>
+      <td>Oregon City, OR</td>
+      <td>Population served:65,000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Sunrise Water Authority</td>
+      <td>Happy Valley, OR</td>
+      <td>Population served:46,228</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Clackamas River Water - Clackamas</td>
+      <td>Clackamas, OR</td>
+      <td>Population served:41,338</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Lake Oswego Municipal Water</td>
+      <td>Lake Oswego, OR</td>
+      <td>Population served:36,453</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Oregon City</td>
+      <td>Oregon City, OR</td>
+      <td>Population served:33,940</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Oak Lodge Water District</td>
+      <td>Milwaukie, OR</td>
+      <td>Population served:30,000</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>City of West Linn</td>
+      <td>West Linn, OR</td>
+      <td>Population served:25,002</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>City of Milwaukie</td>
+      <td>Milwaukie, OR</td>
+      <td>Population served:20,500</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>City of Wilsonville</td>
+      <td>Wilsonville, OR</td>
+      <td>Population served:22,729</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+num_utilities = len(table[0])
+num_utilities
+```
+
+
+
+
+    10
+
+
+
+
+```python
+#Initialize an empty list to contain all of our data
+contaminant_list = []
+contaminants_column = []
+for utility_vist in range(num_utilities):
+    print(utility_vist)
+    utility_vist = str(utility_vist+1)
+    XPath = "/html/body/div[3]/main/figure[1]/table/tbody/tr["+utility_vist+"]/td[1]/a"
+    selection = driver.find_element(By.XPATH, XPath).click()
+    # Parse the resulting html with soup
+    page_source = driver.page_source
+    html_soup = soup(page_source, 'html.parser')
+    
+    #Get the name of the Water Utility
+    Utility = html_soup.find('h1').text
+    Utility
+    
+    #get the html data we need
+    data_box = html_soup.find_all('div', class_='contaminant-name')
+    
+    for i in range(len(data_box)):
+        data = data_box[i].find_all('span')
+        data_measure = []
+        d = {
+            'Utility' : Utility,
+            'Contaminant': '', 
+            'Utility Measuremnt':'', 
+            'EWG HEALTH GUIDELINE': '',
+            'Legal Limit':'' 
+        }
+        
+        contaminant_name = data_box[i].find('h3')
+        d['Contaminant'] = contaminant_name
+        
+        for j in range(len(data)):
+            measurement = data[j].text
+            #print(measurement)
+            data_measure.append(measurement)
+            #print(data_measure)
+
+        try:
+            d['Utility Measuremnt'] = data_measure[data_measure.index('THIS UTILITY')+1]
+        except ValueError:
+            print("A value error arose")
+        except:
+            print("Something else went wrong")
+        try:
+            d['EWG HEALTH GUIDELINE'] = data_measure[data_measure.index('EWG HEALTH GUIDELINE')+1]
+        except ValueError:
+            print("A value error arose")
+        except:
+            print("Something else went wrong") 
+        try:
+            d['Legal Limit'] = data_measure[data_measure.index('LEGAL LIMIT')+1]
+        except ValueError:
+            print("A value error arose")
+        except:
+            print("Something else went wrong") 
+
+        contaminant_list.append(d)
+        
+
+  
+    driver.back()
+
+```
+
+
+
+```python
+df = pd.DataFrame(contaminant_list)
+```
+
+
+```python
+pd.set_option("display.max_rows", None, "display.max_columns", None)
+
+df
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Utility</th>
+      <th>Contaminant</th>
+      <th>Utility Measuremnt</th>
+      <th>EWG HEALTH GUIDELINE</th>
+      <th>Legal Limit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Haloacetic acids (HAA5)†]</td>
+      <td>14.0 ppb</td>
+      <td>0.1 ppb</td>
+      <td>60 ppb</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Total trihalomethanes (TTHMs)†]</td>
+      <td>16.0 ppb</td>
+      <td>0.15 ppb</td>
+      <td>80 ppb</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Barium]</td>
+      <td>1.77 ppb</td>
+      <td>700 ppb</td>
+      <td>2,000 ppb</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Nitrate]</td>
+      <td>0.190 ppm</td>
+      <td>0.14 ppm</td>
+      <td>10 ppm</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Nitrate and nitrite]</td>
+      <td>0.0720 ppm</td>
+      <td>0.14 ppm</td>
+      <td>10 ppm</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>[Nitrite]</td>
+      <td>0.00778 ppm</td>
+      <td></td>
+      <td>1 ppm</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>North Clackamas County Water Commission</td>
+      <td>None</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>South Fork Water Board</td>
+      <td>[Haloacetic acids (HAA5)†]</td>
+      <td>21.6 ppb</td>
+      <td>0.1 ppb</td>
+      <td>60 ppb</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>South Fork Water Board</td>
+      <td>[Nitrate]</td>
+      <td>0.286 ppm</td>
+      <td>0.14 ppm</td>
+      <td>10 ppm</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>South Fork Water Board</td>
+      <td>[Total trihalomethanes (TTHMs)†]</td>
+      <td>29.8 ppb</td>
+      <td>0.15 ppb</td>
+      <td>80 ppb</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>South Fork Water Board</td>
+      <td>[Barium]</td>
+      <td>2.89 ppb</td>
+      <td>700 ppb</td>
+      <td>2,000 ppb</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>South Fork Water Board</td>
+      <td>[Fluoride]</td>
+      <td>0.0286 ppm</td>
+      <td></td>
+      <td>4 ppm</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>South Fork Water Board</td>
+      <td>[Nitrate and nitrite]</td>
+      <td>0.250 ppm</td>
+      <td>0.14 ppm</td>
+      <td>10 ppm</td>
+    </tr>
+       <th>125</th>
+      <td>City of Wilsonville</td>
+      <td>[Barium]</td>
+      <td>5.50 ppb</td>
+      <td>700 ppb</td>
+      <td>2,000 ppb</td>
+    </tr>
+    <tr>
+      <th>126</th>
+      <td>City of Wilsonville</td>
+      <td>[Chlorate]</td>
+      <td>92.3 ppb</td>
+      <td>210 ppb</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>127</th>
+      <td>City of Wilsonville</td>
+      <td>[Chromium (total)]</td>
+      <td>0.00588 ppb</td>
+      <td></td>
+      <td>100 ppb</td>
+    </tr>
+    <tr>
+      <th>128</th>
+      <td>City of Wilsonville</td>
+      <td>[Manganese]</td>
+      <td>3.12 ppb</td>
+      <td>100 ppb</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>129</th>
+      <td>City of Wilsonville</td>
+      <td>[Strontium]</td>
+      <td>0.0380 ppb</td>
+      <td>1,500 ppb</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>130</th>
+      <td>City of Wilsonville</td>
+      <td>[Vanadium]</td>
+      <td>1.59 ppb</td>
+      <td>21 ppb</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>131</th>
+      <td>City of Wilsonville</td>
+      <td>None</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+driver.quit()
+```
+
+
+```python
+df.to_csv('Resources/Data/97045_scrape.csv')
+```
+
+
+```python
+
+```
+
+## Database Design Mock-up
+We are choosing to use sqalchemy to communicate with our Postgres database. Below is the example construction of one of the tables which we will pull zip codes from to automate more web scraping data.
+
+```python
+from config import username, password
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
+from getpass import getpass
+import pandas as pd
+
+url = f'postgresql://{username}:{password}@localhost:5432/project_db'
+```
+
+
+```python
+# Create an engine object.
+engine = create_engine(url, echo=True)
+
+# Create database if it does not exist.
+if not database_exists(engine.url):
+    create_database(engine.url)
+    connection = engine.connect()
+else:
+    # Connect the database if exists.
+    connection = engine.connect()
+```
+
+    2022-05-07 11:25:36,760 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+    2022-05-07 11:25:36,761 INFO sqlalchemy.engine.Engine [raw sql] {}
+    2022-05-07 11:25:36,763 INFO sqlalchemy.engine.Engine select current_schema()
+    2022-05-07 11:25:36,763 INFO sqlalchemy.engine.Engine [raw sql] {}
+    2022-05-07 11:25:36,765 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+    2022-05-07 11:25:36,766 INFO sqlalchemy.engine.Engine [raw sql] {}
+    
+
+
+```python
+df = pd.read_csv("ZIP_Locale_Detail_1_tbl.csv", low_memory=False)
+df.to_sql('usps', con=engine, if_exists='append')    
+```
+
+    2022-05-07 11:32:13,375 INFO sqlalchemy.engine.Engine select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=%(name)s
+    2022-05-07 11:32:13,375 INFO sqlalchemy.engine.Engine [generated in 0.00093s] {'name': 'usps'}
+    2022-05-07 11:32:13,385 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:32:13,387 INFO sqlalchemy.engine.Engine 
+    CREATE TABLE usps (
+    	index BIGINT, 
+    	"AREA NAME" TEXT, 
+    	"AREA CODE" TEXT, 
+    	"DISTRICT NAME" TEXT, 
+    	"DISTRICT NO" BIGINT, 
+    	"DELIVERY ZIPCODE" BIGINT, 
+    	"LOCALE NAME" TEXT, 
+    	"PHYSICAL DELV ADDR" TEXT, 
+    	"PHYSICAL CITY" TEXT, 
+    	"PHYSICAL STATE" TEXT, 
+    	"PHYSICAL ZIP" FLOAT(53), 
+    	"PHYSICAL ZIP 4" FLOAT(53)
+    )
+    
+    
+    2022-05-07 11:32:13,389 INFO sqlalchemy.engine.Engine [no key 0.00161s] {}
+    2022-05-07 11:32:13,422 INFO sqlalchemy.engine.Engine CREATE INDEX ix_usps_index ON usps (index)
+    2022-05-07 11:32:13,422 INFO sqlalchemy.engine.Engine [no key 0.00086s] {}
+    2022-05-07 11:32:13,430 INFO sqlalchemy.engine.Engine COMMIT
+    2022-05-07 11:32:13,473 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:32:14,838 INFO sqlalchemy.engine.Engine INSERT INTO usps (index, "AREA NAME", "AREA CODE", "DISTRICT NAME", "DISTRICT NO", "DELIVERY ZIPCODE", "LOCALE NAME", "PHYSICAL DELV ADDR", "PHYSICAL CITY", "PHYSICAL STATE", "PHYSICAL ZIP", "PHYSICAL ZIP 4") VALUES (%(index)s, %(AREA NAME)s, %(AREA CODE)s, %(DISTRICT NAME)s, %(DISTRICT NO)s, %(DELIVERY ZIPCODE)s, %(LOCALE NAME)s, %(PHYSICAL DELV ADDR)s, %(PHYSICAL CITY)s, %(PHYSICAL STATE)s, %(PHYSICAL ZIP)s, %(PHYSICAL ZIP 4)s)
+    2022-05-07 11:32:14,839 INFO sqlalchemy.engine.Engine [generated in 1.24273s] ({'index': 0, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 601, 'LOCALE NAME': 'ADJUNTAS', 'PHYSICAL DELV ADDR': '37 CALLE MUNOZ RIVERA', 'PHYSICAL CITY': 'ADJUNTAS', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 601.0, 'PHYSICAL ZIP 4': 9998.0}, {'index': 1, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 602, 'LOCALE NAME': 'AGUADA', 'PHYSICAL DELV ADDR': '5 AVE NATIVO ALERS', 'PHYSICAL CITY': 'AGUADA', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 602.0, 'PHYSICAL ZIP 4': 9998.0}, {'index': 2, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 603, 'LOCALE NAME': 'AGUADILLA', 'PHYSICAL DELV ADDR': '50 CARR 459 STE 1', 'PHYSICAL CITY': 'AGUADILLA', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 603.0, 'PHYSICAL ZIP 4': 9998.0}, {'index': 3, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 604, 'LOCALE NAME': 'RAMEY', 'PHYSICAL DELV ADDR': '100 AVE BORINQUEN', 'PHYSICAL CITY': 'AGUADILLA', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 603.0, 'PHYSICAL ZIP 4': 9996.0}, {'index': 4, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 605, 'LOCALE NAME': 'AGUADILLA', 'PHYSICAL DELV ADDR': '50 CARR 459 STE 1', 'PHYSICAL CITY': 'AGUADILLA', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 603.0, 'PHYSICAL ZIP 4': 9998.0}, {'index': 5, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 605, 'LOCALE NAME': 'VICTORIA', 'PHYSICAL DELV ADDR': '68 CALLE RAMON E BETANCES', 'PHYSICAL CITY': 'AGUADILLA', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 603.0, 'PHYSICAL ZIP 4': 9997.0}, {'index': 6, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 606, 'LOCALE NAME': 'MARICAO', 'PHYSICAL DELV ADDR': '9 CALLE ZUZUARREGUI FRNT', 'PHYSICAL CITY': 'MARICAO', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 606.0, 'PHYSICAL ZIP 4': 9998.0}, {'index': 7, 'AREA NAME': 'SOUTHERN', 'AREA CODE': '4G', 'DISTRICT NAME': 'PUERTO RICO', 'DISTRICT NO': 6, 'DELIVERY ZIPCODE': 610, 'LOCALE NAME': 'ANASCO', 'PHYSICAL DELV ADDR': '93 CALLE 65 INFANTERIA STE 1', 'PHYSICAL CITY': 'ANASCO', 'PHYSICAL STATE': 'PR', 'PHYSICAL ZIP': 610.0, 'PHYSICAL ZIP 4': 2947.0}  ... displaying 10 of 43900 total bound parameter sets ...  {'index': 43898, 'AREA NAME': 'WESTPAC', 'AREA CODE': '4E', 'DISTRICT NAME': 'ALASKA', 'DISTRICT NO': 995, 'DELIVERY ZIPCODE': 99928, 'LOCALE NAME': 'WARD COVE', 'PHYSICAL DELV ADDR': '7172 N TONGASS HWY', 'PHYSICAL CITY': 'WARD COVE', 'PHYSICAL STATE': 'AK', 'PHYSICAL ZIP': 99928.0, 'PHYSICAL ZIP 4': 9800.0}, {'index': 43899, 'AREA NAME': 'WESTPAC', 'AREA CODE': '4E', 'DISTRICT NAME': 'ALASKA', 'DISTRICT NO': 995, 'DELIVERY ZIPCODE': 99929, 'LOCALE NAME': 'WRANGELL', 'PHYSICAL DELV ADDR': '112 FEDERAL WAY', 'PHYSICAL CITY': 'WRANGELL', 'PHYSICAL STATE': 'AK', 'PHYSICAL ZIP': 99929.0, 'PHYSICAL ZIP 4': 9800.0})
+    2022-05-07 11:32:17,125 INFO sqlalchemy.engine.Engine COMMIT
+    
+
+
+```python
+df = pd.read_csv("EWG_violationpoints.csv", low_memory=False)
+df.to_sql('ewg', con=engine, if_exists='append')  
+```
+
+    2022-05-07 11:40:51,313 INFO sqlalchemy.engine.Engine select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=%(name)s
+    2022-05-07 11:40:51,314 INFO sqlalchemy.engine.Engine [cached since 517.9s ago] {'name': 'ewg'}
+    2022-05-07 11:40:51,320 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:40:51,322 INFO sqlalchemy.engine.Engine 
+    CREATE TABLE ewg (
+    	index BIGINT, 
+    	"Utility" TEXT, 
+    	"Location" TEXT, 
+    	"PeopleServed" BIGINT, 
+    	"ViolationPoints" BIGINT
+    )
+    
+    
+    2022-05-07 11:40:51,323 INFO sqlalchemy.engine.Engine [no key 0.00107s] {}
+    2022-05-07 11:40:51,331 INFO sqlalchemy.engine.Engine CREATE INDEX ix_ewg_index ON ewg (index)
+    2022-05-07 11:40:51,332 INFO sqlalchemy.engine.Engine [no key 0.00081s] {}
+    2022-05-07 11:40:51,337 INFO sqlalchemy.engine.Engine COMMIT
+    2022-05-07 11:40:51,343 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:40:51,368 INFO sqlalchemy.engine.Engine INSERT INTO ewg (index, "Utility", "Location", "PeopleServed", "ViolationPoints") VALUES (%(index)s, %(Utility)s, %(Location)s, %(PeopleServed)s, %(ViolationPoints)s)
+    2022-05-07 11:40:51,369 INFO sqlalchemy.engine.Engine [generated in 0.02100s] ({'index': 0, 'Utility': 'Dekalb-Jackson Water Supply District', 'Location': 'Ider, AL', 'PeopleServed': 15531, 'ViolationPoints': 30}, {'index': 1, 'Utility': 'North Clarke Water Authority', 'Location': 'Thomasville, AL', 'PeopleServed': 975, 'ViolationPoints': 25}, {'index': 2, 'Utility': 'Cwm Water Authority', 'Location': 'Dickinson, AL', 'PeopleServed': 1722, 'ViolationPoints': 10}, {'index': 3, 'Utility': 'Centre Water & Sewer Board', 'Location': 'Centre, AL', 'PeopleServed': 7050, 'ViolationPoints': 5}, {'index': 4, 'Utility': 'Mid-central Water Authority', 'Location': 'Fulton, AL', 'PeopleServed': 2331, 'ViolationPoints': 5}, {'index': 5, 'Utility': 'Thomasville Water Works & Sewer Board', 'Location': 'Thomasville, AL', 'PeopleServed': 6897, 'ViolationPoints': 5}, {'index': 6, 'Utility': 'Union Grove Utility Board', 'Location': 'Union Grove, AL', 'PeopleServed': 2862, 'ViolationPoints': 2}, {'index': 7, 'Utility': 'Prichard Water Works Board', 'Location': 'Prichard, AL', 'PeopleServed': 32400, 'ViolationPoints': 2}  ... displaying 10 of 1429 total bound parameter sets ...  {'index': 1427, 'Utility': 'Jackson, Town Of', 'Location': 'Jackson, WY', 'PeopleServed': 8000, 'ViolationPoints': 4}, {'index': 1428, 'Utility': 'Cokeville, Town Of', 'Location': 'Cokeville, WY', 'PeopleServed': 535, 'ViolationPoints': 4})
+    2022-05-07 11:40:51,421 INFO sqlalchemy.engine.Engine COMMIT
+    
+
+
+```python
+df = pd.read_csv("water_potability.csv", low_memory=False)
+df.to_sql('train', con=engine, if_exists='append')  
+```
+
+    2022-05-07 11:43:29,651 INFO sqlalchemy.engine.Engine select relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where pg_catalog.pg_table_is_visible(c.oid) and relname=%(name)s
+    2022-05-07 11:43:29,652 INFO sqlalchemy.engine.Engine [cached since 676.3s ago] {'name': 'train'}
+    2022-05-07 11:43:29,657 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:43:29,660 INFO sqlalchemy.engine.Engine 
+    CREATE TABLE train (
+    	index BIGINT, 
+    	ph FLOAT(53), 
+    	"Hardness" FLOAT(53), 
+    	"Solids" FLOAT(53), 
+    	"Chloramines" FLOAT(53), 
+    	"Sulfate" FLOAT(53), 
+    	"Conductivity" FLOAT(53), 
+    	"Organic_carbon" FLOAT(53), 
+    	"Trihalomethanes" FLOAT(53), 
+    	"Turbidity" FLOAT(53), 
+    	"Potability" BIGINT
+    )
+    
+    
+    2022-05-07 11:43:29,661 INFO sqlalchemy.engine.Engine [no key 0.00105s] {}
+    2022-05-07 11:43:29,664 INFO sqlalchemy.engine.Engine CREATE INDEX ix_train_index ON train (index)
+    2022-05-07 11:43:29,664 INFO sqlalchemy.engine.Engine [no key 0.00074s] {}
+    2022-05-07 11:43:29,670 INFO sqlalchemy.engine.Engine COMMIT
+    2022-05-07 11:43:29,676 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+    2022-05-07 11:43:29,771 INFO sqlalchemy.engine.Engine INSERT INTO train (index, ph, "Hardness", "Solids", "Chloramines", "Sulfate", "Conductivity", "Organic_carbon", "Trihalomethanes", "Turbidity", "Potability") VALUES (%(index)s, %(ph)s, %(Hardness)s, %(Solids)s, %(Chloramines)s, %(Sulfate)s, %(Conductivity)s, %(Organic_carbon)s, %(Trihalomethanes)s, %(Turbidity)s, %(Potability)s)
+    2022-05-07 11:43:29,772 INFO sqlalchemy.engine.Engine [generated in 0.08316s] ({'index': 0, 'ph': None, 'Hardness': 204.8904554713363, 'Solids': 20791.318980747023, 'Chloramines': 7.300211873184757, 'Sulfate': 368.51644134980336, 'Conductivity': 564.3086541722439, 'Organic_carbon': 10.3797830780847, 'Trihalomethanes': 86.9909704615088, 'Turbidity': 2.9631353806316407, 'Potability': 0}, {'index': 1, 'ph': 3.71608007538699, 'Hardness': 129.42292051494425, 'Solids': 18630.057857970347, 'Chloramines': 6.635245883862, 'Sulfate': None, 'Conductivity': 592.8853591348523, 'Organic_carbon': 15.18001311635726, 'Trihalomethanes': 56.32907628451764, 'Turbidity': 4.500656274942408, 'Potability': 0}, {'index': 2, 'ph': 8.099124189298397, 'Hardness': 224.23625939355776, 'Solids': 19909.541732292397, 'Chloramines': 9.275883602694089, 'Sulfate': None, 'Conductivity': 418.6062130644815, 'Organic_carbon': 16.868636929550973, 'Trihalomethanes': 66.42009251176368, 'Turbidity': 3.0559337496641685, 'Potability': 0}, {'index': 3, 'ph': 8.316765884214679, 'Hardness': 214.3733940856225, 'Solids': 22018.41744077529, 'Chloramines': 8.05933237743854, 'Sulfate': 356.88613564305666, 'Conductivity': 363.2665161642437, 'Organic_carbon': 18.436524495493305, 'Trihalomethanes': 100.34167436508008, 'Turbidity': 4.628770536837084, 'Potability': 0}, {'index': 4, 'ph': 9.092223456290965, 'Hardness': 181.10150923612525, 'Solids': 17978.98633892625, 'Chloramines': 6.546599974207941, 'Sulfate': 310.13573752420444, 'Conductivity': 398.4108133818447, 'Organic_carbon': 11.558279443446397, 'Trihalomethanes': 31.997992727424737, 'Turbidity': 4.075075425430034, 'Potability': 0}, {'index': 5, 'ph': 5.584086638456089, 'Hardness': 188.3133237696164, 'Solids': 28748.68773904612, 'Chloramines': 7.54486878877965, 'Sulfate': 326.6783629116736, 'Conductivity': 280.4679159334877, 'Organic_carbon': 8.399734640152758, 'Trihalomethanes': 54.91786184199447, 'Turbidity': 2.5597082275565217, 'Potability': 0}, {'index': 6, 'ph': 10.223862164528772, 'Hardness': 248.07173527013992, 'Solids': 28749.716543528237, 'Chloramines': 7.5134084658313025, 'Sulfate': 393.66339551509645, 'Conductivity': 283.6516335078445, 'Organic_carbon': 13.789695317519886, 'Trihalomethanes': 84.60355617402357, 'Turbidity': 2.672988736934779, 'Potability': 0}, {'index': 7, 'ph': 8.635848718500734, 'Hardness': 203.3615225845705, 'Solids': 13672.091763901635, 'Chloramines': 4.563008685599703, 'Sulfate': 303.3097711592812, 'Conductivity': 474.6076449424485, 'Organic_carbon': 12.36381669870525, 'Trihalomethanes': 62.79830896292516, 'Turbidity': 4.401424715445482, 'Potability': 0}  ... displaying 10 of 3276 total bound parameter sets ...  {'index': 3274, 'ph': 5.126762923351532, 'Hardness': 230.60375750846123, 'Solids': 11983.869376336364, 'Chloramines': 6.303356534249105, 'Sulfate': None, 'Conductivity': 402.883113121781, 'Organic_carbon': 11.1689462210565, 'Trihalomethanes': 77.48821310275477, 'Turbidity': 4.708658467526655, 'Potability': 1}, {'index': 3275, 'ph': 7.874671357791283, 'Hardness': 195.10229858610904, 'Solids': 17404.17706105066, 'Chloramines': 7.509305856927908, 'Sulfate': None, 'Conductivity': 327.4597604610721, 'Organic_carbon': 16.140367626166324, 'Trihalomethanes': 78.69844632549504, 'Turbidity': 2.309149056634923, 'Potability': 1})
+    2022-05-07 11:43:30,065 INFO sqlalchemy.engine.Engine COMMIT
+    
+
+
+```python
+
+```
+
+
+
