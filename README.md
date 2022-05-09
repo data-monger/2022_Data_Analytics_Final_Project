@@ -451,7 +451,7 @@ sns.heatmap(data.corr(), annot=True, cmap='Spectral' )
     
 
 
-### As seen in the plot above, there are no feature correlations that have a correlation coefficient higher than 0.082 which comes from the pH and solids
+### As seen in the plot above, there are no feature correlations that have a correlation coefficient higher than 0.093 which comes from the sulfates and hardness.
 
 ## Take a look at the data distributions
 
